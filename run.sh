@@ -12,4 +12,8 @@ chmod +x "$CONFIG_SCRIPT"
 
 "$CONFIG_SCRIPT" transform "$1" "$CONF_DIR/config.yml"
 
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
 docker run -ti -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -p 8081:8081 --rm minifi
