@@ -17,7 +17,7 @@ if [ -n "$1" ]; then
       exit 1
     fi
     
-    sed "s/b23a4621-cf19-42e6-967c-ffd3716e6a24/$2/g" "$DIR/templates/InvokeHttpMiNiFiTemplateTest.xml" > /tmp/InvokeHttpMiNiFiTemplateTest.xml
+    sed "s/b23a4621-cf19-42e6-967c-ffd3716e6a24/$2/g" "$1" > /tmp/InvokeHttpMiNiFiTemplateTest.xml
     "$CONFIG_SCRIPT" transform "/tmp/InvokeHttpMiNiFiTemplateTest.xml" "$CONF_DIR/config.yml"
   else
     "$CONFIG_SCRIPT" transform "$1" "$CONF_DIR/config.yml"
