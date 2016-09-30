@@ -28,4 +28,4 @@ if [ -n "$1" ]; then
   fi
 fi
 
-docker run -ti -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -p 8081:8081 --rm --net minifi --hostname minifi --name minifi minifi
+docker run -ti -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -p 8081:8081 --rm --net minifi --hostname minifi --name minifi minifi
