@@ -623,9 +623,9 @@
           <useCompression>false</useCompression>
         </inputPorts>
       </contents>
-      <proxyHost/>
-      <proxyUser/>
-      <targetUri>http://nifi:8080/nifi</targetUri>
+      <proxyHost>squidnp.minifi</proxyHost>
+      <proxyPort>3128</proxyPort>
+      <targetUri>http://nifi.minifi2:8080/nifi</targetUri>
       <transportProtocol>HTTP</transportProtocol>
       <yieldDuration>10 sec</yieldDuration>
     </remoteProcessGroups>

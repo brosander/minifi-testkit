@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#set -e
+
+if [ -n "$2" ]; then
+  MIN="$1"
+  MAX="$2"
+elif [ -n "$1" ]; then
+  MIN="1"
+  MAX="$1"
+else
+  MIN="1"
+  MAX="3"
+fi
+
+echo "Min version: $MIN max version: $MAX"
+
+# http://stackoverflow.com/questions/59895/can-a-bash-script-tell-which-directory-it-is-stored-in#answer-246128
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+cd "$DIR"
+
+for i in $(seq $MIN $MAX); do
+  echo "Finding files in v$i"
+  SCENARIOS="$(find "scenarios/v$i" -maxdepth 3 -type f -name "*.xml" && find "scenarios/v$i" -maxdepth 3 -type f -name "*.yml")"
+  for i in $SCENARIOS; do
+    ./run.sh "$i"
+  done
+done
