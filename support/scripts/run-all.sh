@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -e
+set -e
 
 if [ -n "$2" ]; then
   MIN="$1"
@@ -20,10 +20,16 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd "$DIR"
 
+find scenarios -mindepth 4 -maxdepth 4 -type d -name 'conf' -exec rm -r {} \;
+find scenarios -mindepth 4 -maxdepth 4 -type d -name 'output' -exec rm -r {} \;
+
+find scenarios/ -maxdepth 3 -mindepth 3 -type d -name '*ml' -exec bash -c 'mkdir "$0/output" && touch "$0/output/NOT_RUN"' {} \;
+
 for i in $(seq $MIN $MAX); do
   echo "Finding files in v$i"
   SCENARIOS="$(find "scenarios/v$i" -maxdepth 3 -type f -name "*.xml" && find "scenarios/v$i" -maxdepth 3 -type f -name "*.yml")"
   for i in $SCENARIOS; do
+    SCENARIO_DIR="$(dirname "$i")"
     ./run.sh "$i"
   done
 done

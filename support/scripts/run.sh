@@ -25,8 +25,21 @@ fi
 
 mkdir "$CONF_DIR"
 
+OUTPUT_DIR="$RUN_DIR/output"
+
+if [ -e "$OUTPUT_DIR" ]; then
+  rm -rf "$OUTPUT_DIR"
+fi
+
+mkdir "$OUTPUT_DIR"
+
 TOOLKIT_DIR="$DIR/toolkit"
 ARCHIVE_DIR="$DIR/archive"
+ARCHIVE="$(find "$ARCHIVE_DIR" -maxdepth 1 -name 'minifi*.zip' | head -n 1)"
+
+unzip -p "$ARCHIVE" "$(unzip -l "$ARCHIVE" | grep "conf/logback.xml" | awk '{print $NF}')" > "$CONF_DIR/logback.xml"
+
+sed -i '' 's/^\(.*org\.apache\.nifi\.controller\.repository\.StandardProcessSession.*level="\).*\(".*$\)/\1INFO\2/g' "$CONF_DIR/logback.xml"
 
 EXTENSION="$(echo "$1" | sed 's/.*\.//g')"
 
@@ -42,4 +55,33 @@ else
   exit 1
 fi
 
-docker run -ti -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf --rm --net minifi --hostname minifi --name minifi minifi
+EXPECTED_FILE="$(find "$RUN_DIR" -maxdepth 1 -name 'expected_*' | head -n 1)"
+
+if [ -z "$EXPECTED_FILE" ]; then
+  echo "Couldn't find expected file in $RUN_DIR, running indefinitely"
+  docker run -ti --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf --net minifi --hostname minifi --name minifi minifi
+else
+  EXPECTED_LINE="$(head -n 1 "$EXPECTED_FILE")"
+  EXPECTED_NUM="$(echo "$EXPECTED_FILE" | sed 's/.*expected_\(.*\)$/\1/g')"
+
+  echo "Looking for \"$EXPECTED_LINE\" $EXPECTED_NUM times"
+  FOUND_COUNT=0
+
+  docker run --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf --net minifi --hostname minifi --name minifi minifi 2>&1 > "$OUTPUT_DIR/minifi.log" &
+
+  # http://superuser.com/questions/270529/monitoring-a-file-until-a-string-is-found#answer-449307
+  tail -f "$OUTPUT_DIR/minifi.log" | while read LOGLINE
+  do
+    if [[ "$LOGLINE" =~ $EXPECTED_LINE ]]; then
+      ((FOUND_COUNT++))
+      echo "minifi log (found $FOUND_COUNT): $LOGLINE" >> "$OUTPUT_DIR/analysis.log"
+      if [ "$FOUND_COUNT" -eq "$EXPECTED_NUM" ]; then
+        echo "Found expected line $FOUND_COUNT times." >> "$OUTPUT_DIR/analysis.log"
+        echo "Scenario $1 successful" >> "$OUTPUT_DIR/analysis.log"
+        docker kill minifi
+        pkill -P $$ tail
+      fi
+    fi
+    echo "$1 (found $FOUND_COUNT): $LOGLINE"
+  done
+fi

@@ -20,7 +20,6 @@ MINIFI_ZIP_FILE="$(find "$MINIFI_ASSEMBLY_DIR" -maxdepth 1 -name 'minifi*.zip' |
 TARGET_DIR="$DIR/target"
 ARCHIVE_DIR="$TARGET_DIR/archive"
 TOOLKIT_DIR="$TARGET_DIR/toolkit"
-CONF_DIR="$TARGET_DIR/conf"
 
 ARCHIVE="$ARCHIVE_DIR/minifi-archive.zip"
 

@@ -11,7 +11,7 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <destination>
         <groupId>5b0a5c18-a02e-4a85-8080-0187ee679763</groupId>
-        <id>b23a4621-cf19-42e6-967c-ffd3716e6a24</id>
+        <id>da15f83d-0158-1000-7f8d-eb4d2652f870</id>
         <type>REMOTE_INPUT_PORT</type>
       </destination>
       <flowFileExpiration>0 sec</flowFileExpiration>
@@ -203,7 +203,7 @@
       </bends>
       <destination>
         <groupId>5b0a5c18-a02e-4a85-8080-0187ee679763</groupId>
-        <id>b23a4621-cf19-42e6-967c-ffd3716e6a24</id>
+        <id>da15f83d-0158-1000-7f8d-eb4d2652f870</id>
         <type>REMOTE_INPUT_PORT</type>
       </destination>
       <flowFileExpiration>0 sec</flowFileExpiration>
@@ -618,14 +618,12 @@
         <inputPorts>
           <comments/>
           <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
-          <id>b23a4621-cf19-42e6-967c-ffd3716e6a24</id>
+          <id>da15f83d-0158-1000-7f8d-eb4d2652f870</id>
           <name>response</name>
           <useCompression>false</useCompression>
         </inputPorts>
       </contents>
-      <proxyHost>squidnp.minifi</proxyHost>
-      <proxyPort>3128</proxyPort>
-      <targetUri>http://nifi.minifi2:8080/nifi</targetUri>
+      <targetUri>http://nifi.minifi:8080/nifi</targetUri>
       <transportProtocol>HTTP</transportProtocol>
       <yieldDuration>10 sec</yieldDuration>
     </remoteProcessGroups>
