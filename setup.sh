@@ -20,6 +20,7 @@ MINIFI_ZIP_FILE="$(find "$MINIFI_ASSEMBLY_DIR" -maxdepth 1 -name 'minifi*.zip' |
 TARGET_DIR="$DIR/target"
 ARCHIVE_DIR="$TARGET_DIR/archive"
 TOOLKIT_DIR="$TARGET_DIR/toolkit"
+NIFI_DIR="$TARGET_DIR/nifi"
 
 ARCHIVE="$ARCHIVE_DIR/minifi-archive.zip"
 
@@ -65,6 +66,8 @@ cp "$MINIFI_ZIP_FILE" "$ARCHIVE"
 mkdir "$TOOLKIT_DIR"
 unzip -d "$TOOLKIT_DIR" "$MINIFI_TOOLKIT_ZIP_FILE"
 
+mkdir "$NIFI_DIR"
+unzip -d "$NIFI_DIR" "$2"
 
 unzip -p "$2" "$(unzip -l "$2" | grep nifi\\.properties | awk '{print $NF}')" > "$TARGET_DIR/support/nifi/nifi.properties"
 sed -i '' 's/^nifi.remote.input.socket.port=.*/nifi.remote.input.socket.port=8081/g' "$TARGET_DIR/support/nifi/nifi.properties"

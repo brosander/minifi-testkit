@@ -33,8 +33,17 @@ fi
 
 mkdir "$OUTPUT_DIR"
 
+NAR_DIR="$RUN_DIR/nars"
+
+if [ -e "$NAR_DIR" ]; then
+  rm -rf "$NAR_DIR"
+fi
+
+mkdir "$NAR_DIR"
+
 TOOLKIT_DIR="$DIR/toolkit"
 ARCHIVE_DIR="$DIR/archive"
+NIFI_DIR="$DIR/nifi"
 ARCHIVE="$(find "$ARCHIVE_DIR" -maxdepth 1 -name 'minifi*.zip' | head -n 1)"
 
 unzip -p "$ARCHIVE" "$(unzip -l "$ARCHIVE" | grep "conf/logback.xml" | awk '{print $NF}')" > "$CONF_DIR/logback.xml"
@@ -55,11 +64,24 @@ else
   exit 1
 fi
 
+REQUIRED_NARS="$(find "$RUN_DIR" -maxdepth 1 -name 'required_nars' | head -n 1)"
+
+if [ -n "$REQUIRED_NARS" ]; then
+  for i in `cat "$REQUIRED_NARS"`; do
+    NAR_FILE="$(find "$NIFI_DIR" -type f -name "$i" | head -n 1)"
+    if [ -z "$NAR_FILE" ]; then
+      echo "Unable to find $i in $NIFI_DIR"
+      exit 1
+    fi
+    cp "$NAR_FILE" "$NAR_DIR"
+  done
+fi
+
 EXPECTED_FILE="$(find "$RUN_DIR" -maxdepth 1 -name 'expected_*' | head -n 1)"
 
 if [ -z "$EXPECTED_FILE" ]; then
   echo "Couldn't find expected file in $RUN_DIR, running indefinitely"
-  docker run -ti --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf --net minifi --hostname minifi --name minifi minifi
+  docker run -ti --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -v "$NAR_DIR":/opt/minifi-lib --net minifi --hostname minifi --name minifi minifi
 else
   EXPECTED_LINE="$(head -n 1 "$EXPECTED_FILE")"
   EXPECTED_NUM="$(echo "$EXPECTED_FILE" | sed 's/.*expected_\(.*\)$/\1/g')"
@@ -67,7 +89,7 @@ else
   echo "Looking for \"$EXPECTED_LINE\" $EXPECTED_NUM times"
   FOUND_COUNT=0
 
-  docker run --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf --net minifi --hostname minifi --name minifi minifi 2>&1 > "$OUTPUT_DIR/minifi.log" &
+  docker run --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -v "$NAR_DIR":/opt/minifi-lib --net minifi --hostname minifi --name minifi minifi 2>&1 > "$OUTPUT_DIR/minifi.log" &
 
   # http://superuser.com/questions/270529/monitoring-a-file-until-a-string-is-found#answer-449307
   tail -f "$OUTPUT_DIR/minifi.log" | while read LOGLINE
