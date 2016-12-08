@@ -29,6 +29,7 @@ for i in $(seq $MIN $MAX); do
   for i in $SCENARIOS; do
     SCENARIO_DIR="$(dirname "$i")"
     ./run.sh "$i"
+    sleep 1
   done
 done
 

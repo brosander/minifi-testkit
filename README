@@ -2,6 +2,8 @@ This is a repository aimed at testing the minifi command line toolkit.  It autom
 
 Usage:
 ```
-./setup.sh MINIFI_REPO_DIR
-./run.sh TEMPLATE_XML
+./setup.sh MINIFI_REPO_DIR NIFI_ARCHIVE
+cd target/
+./startup.sh
+./run-all.sh
 ```
