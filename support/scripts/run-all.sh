@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 if [ -n "$2" ]; then
   MIN="$1"
   MAX="$2"
@@ -33,3 +31,5 @@ for i in $(seq $MIN $MAX); do
     ./run.sh "$i"
   done
 done
+
+./analyze.sh

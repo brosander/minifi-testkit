@@ -79,6 +79,12 @@ fi
 
 EXPECTED_FILE="$(find "$RUN_DIR" -maxdepth 1 -name 'expected_*' | head -n 1)"
 
+trap inttrap INT
+
+function inttrap() {
+  docker kill minifi
+}
+
 if [ -z "$EXPECTED_FILE" ]; then
   echo "Couldn't find expected file in $RUN_DIR, running indefinitely"
   docker run -ti --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -v "$NAR_DIR":/opt/minifi-lib --net minifi --hostname minifi --name minifi minifi
