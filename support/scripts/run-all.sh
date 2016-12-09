@@ -29,7 +29,12 @@ for i in $(seq $MIN $MAX); do
   for i in $SCENARIOS; do
     SCENARIO_DIR="$(dirname "$i")"
     ./run.sh "$i"
-    sleep 1
+    while [ -n "$(docker ps | awk '{print $NF}' | grep "^minifi$")" ]; do
+      docker kill minifi
+    done
+    while [ -n "$(docker ps -a | awk '{print $NF}' | grep "^minifi$")" ]; do
+      docker rm minifi
+    done
   done
 done
 
