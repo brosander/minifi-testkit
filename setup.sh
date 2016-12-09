@@ -21,6 +21,7 @@ TARGET_DIR="$DIR/target"
 ARCHIVE_DIR="$TARGET_DIR/archive"
 TOOLKIT_DIR="$TARGET_DIR/toolkit"
 NIFI_DIR="$TARGET_DIR/nifi"
+JAR_DIR="$TARGET_DIR/jars"
 
 ARCHIVE="$ARCHIVE_DIR/minifi-archive.zip"
 
@@ -52,6 +53,12 @@ if [ ! -e "$DIR/dev-dockerfiles" ]; then
   git clone https://github.com/brosander/dev-dockerfiles.git
 fi
 
+if [ ! -e "$DIR/jars" ]; then
+  mkdir "$DIR/jars"
+  wget -O "$DIR/jars/postgresql-9.4.1212.jre6.jar" https://jdbc.postgresql.org/download/postgresql-9.4.1212.jre6.jar
+fi
+
+
 "$DIR/clean.sh"
 
 mkdir "$TARGET_DIR"
@@ -65,6 +72,8 @@ cp "$MINIFI_ZIP_FILE" "$ARCHIVE"
 
 mkdir "$TOOLKIT_DIR"
 unzip -d "$TOOLKIT_DIR" "$MINIFI_TOOLKIT_ZIP_FILE"
+
+cp -r "$DIR/jars" "$JAR_DIR"
 
 mkdir "$NIFI_DIR"
 unzip -d "$NIFI_DIR" "$2"
@@ -148,6 +157,20 @@ echo "      - $TARGET_DIR/support/nifi-proxy:/opt/nifi-conf" >> "$TARGET_DIR/doc
 echo "      - /dev/urandom:/dev/random" >> "$TARGET_DIR/docker-compose.yml"
 echo "      - $2:/opt/nifi-archive/nifi-archive.zip" >> "$TARGET_DIR/docker-compose.yml"
 
+echo "  nyc-traffic-violations-postgres:" >> "$TARGET_DIR/docker-compose.yml"
+echo "    container_name: nyc-traffic-violations-postgres" >> "$TARGET_DIR/docker-compose.yml"
+echo "    image: nyc_traffic_violations_postgres" >> "$TARGET_DIR/docker-compose.yml"
+echo "    restart: always" >> "$TARGET_DIR/docker-compose.yml"
+echo "    ports:" >> "$TARGET_DIR/docker-compose.yml"
+echo "      - 5432" >> "$TARGET_DIR/docker-compose.yml"
+echo "    networks:" >> "$TARGET_DIR/docker-compose.yml"
+echo "      minifi:" >> "$TARGET_DIR/docker-compose.yml"
+echo "        aliases:" >> "$TARGET_DIR/docker-compose.yml"
+echo "          - postgres.minifi" >> "$TARGET_DIR/docker-compose.yml"
+echo "    environment:" >> "$TARGET_DIR/docker-compose.yml"
+echo "      - POSTGRES_PASSWORD=mysecretpassword" >> "$TARGET_DIR/docker-compose.yml"
+echo "      - POSTGRES_DB=test" >> "$TARGET_DIR/docker-compose.yml"
+
 echo  >> "$TARGET_DIR/docker-compose.yml"
 echo  >> "$TARGET_DIR/docker-compose.yml"
 echo "networks:" >> "$TARGET_DIR/docker-compose.yml"
@@ -160,6 +183,7 @@ buildImage nifi "$DIR/dev-dockerfiles/nifi/ubuntu" "./build.sh"
 buildImage minifi "$DIR/dev-dockerfiles/minifi/java/ubuntu" "./build.sh"
 buildImage alpine-squid "$DIR/dev-dockerfiles/squid/alpine"
 buildImage apache-utils "$DIR/dev-dockerfiles/apache/utils" "./build.sh"
+buildImage nyc_traffic_violations_postgres "$DIR/dev-dockerfiles/sample-data/nyc_traffic_violations/postgres"
 docker run -ti --rm apache-utils sh -c "echo password | htpasswd -n -i username" | grep -v -e '^[[:space:]]*$' > "$TARGET_DIR/support/squid/pass/passwords"
 
 if [ -z "`docker network ls | awk '{print $2}' | grep '^minifi$'`" ]; then

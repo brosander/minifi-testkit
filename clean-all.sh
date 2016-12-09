@@ -15,3 +15,7 @@ fi
 if [ -e "$DIR/dev-dockerfiles" ]; then
   rm -rf "$DIR/dev-dockerfiles"
 fi
+
+if [ -e "$DIR/jars" ]; then
+  rm -rf "$DIR/jars"
+fi

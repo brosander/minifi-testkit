@@ -33,13 +33,21 @@ fi
 
 mkdir "$OUTPUT_DIR"
 
-NAR_DIR="$RUN_DIR/nars"
+MINIFI_LIB_DIR="$RUN_DIR/lib"
 
-if [ -e "$NAR_DIR" ]; then
-  rm -rf "$NAR_DIR"
+if [ -e "$MINIFI_LIB_DIR" ]; then
+  rm -rf "$MINIFI_LIB_DIR"
 fi
 
-mkdir "$NAR_DIR"
+mkdir "$MINIFI_LIB_DIR"
+
+MINIFI_JAR_DIR="$RUN_DIR/jars"
+
+if [ -e "$MINIFI_JAR_DIR" ]; then
+  rm -rf "$MINIFI_JAR_DIR"
+fi
+
+mkdir "$MINIFI_JAR_DIR"
 
 TOOLKIT_DIR="$DIR/toolkit"
 ARCHIVE_DIR="$DIR/archive"
@@ -57,6 +65,9 @@ if [ "$EXTENSION" = "xml" ]; then
 
   chmod +x "$CONFIG_SCRIPT"
   "$CONFIG_SCRIPT" transform "$1" "$CONF_DIR/config.yml"
+  if [ -e "$RUN_DIR/post_transform.sh" ]; then
+    "$RUN_DIR/post_transform.sh"
+  fi
 elif [ "$EXTENSION" = "yml" ]; then
   cp "$1" "$CONF_DIR/config.yml"
 else
@@ -73,7 +84,20 @@ if [ -n "$REQUIRED_NARS" ]; then
       echo "Unable to find $i in $NIFI_DIR"
       exit 1
     fi
-    cp "$NAR_FILE" "$NAR_DIR"
+    cp "$NAR_FILE" "$MINIFI_LIB_DIR"
+  done
+fi
+
+REQUIRED_JARS="$(find "$RUN_DIR" -maxdepth 1 -name 'required_jars' | head -n 1)"
+
+if [ -n "$REQUIRED_JARS" ]; then
+  for i in `cat "$REQUIRED_JARS"`; do
+    JAR_FILE="$(find "$DIR/jars" -type f -name "$i" | head -n 1)"
+    if [ -z "$JAR_FILE" ]; then
+      echo "Unable to find $i in $NIFI_DIR"
+      exit 1
+    fi
+    cp "$JAR_FILE" "$MINIFI_JAR_DIR"
   done
 fi
 
@@ -87,7 +111,7 @@ function inttrap() {
 
 if [ -z "$EXPECTED_FILE" ]; then
   echo "Couldn't find expected file in $RUN_DIR, running indefinitely"
-  docker run -ti --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -v "$NAR_DIR":/opt/minifi-lib --net minifi --hostname minifi --name minifi minifi
+  docker run -ti --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -v "$MINIFI_LIB_DIR":/opt/minifi-lib -v "$MINIFI_JAR_DIR":/opt/minifi-jars --net minifi --hostname minifi --name minifi minifi 2>&1 | tee "$OUTPUT_DIR/minifi.log"
 else
   EXPECTED_LINE="$(head -n 1 "$EXPECTED_FILE")"
   EXPECTED_NUM="$(echo "$EXPECTED_FILE" | sed 's/.*expected_\(.*\)$/\1/g')"
@@ -95,7 +119,7 @@ else
   echo "Looking for \"$EXPECTED_LINE\" $EXPECTED_NUM times"
   FOUND_COUNT=0
 
-  docker run --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -v "$NAR_DIR":/opt/minifi-lib --net minifi --hostname minifi --name minifi minifi 2>&1 > "$OUTPUT_DIR/minifi.log" &
+  docker run --rm -v /dev/urandom:/dev/random -v "$ARCHIVE_DIR":/opt/minifi-archive -v "$CONF_DIR":/opt/minifi-conf -v "$MINIFI_LIB_DIR":/opt/minifi-lib -v "$MINIFI_JAR_DIR":/opt/minifi-jars --net minifi --hostname minifi --name minifi minifi 2>&1 > "$OUTPUT_DIR/minifi.log" &
 
   # http://superuser.com/questions/270529/monitoring-a-file-until-a-string-is-found#answer-449307
   tail -f "$OUTPUT_DIR/minifi.log" | while read LOGLINE

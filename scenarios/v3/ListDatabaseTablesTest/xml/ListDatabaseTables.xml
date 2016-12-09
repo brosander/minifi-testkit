@@ -1,0 +1,295 @@
+<?xml version="1.0" ?>
+<template encoding-version="1.0">
+  <description></description>
+  <groupId>e44de2d8-0158-1000-c36d-ded39fea2583</groupId>
+  <name>ListDatabaseTables</name>
+  <snippet>
+    <connections>
+      <id>e45c896f-0158-1000-0000-000000000000</id>
+      <parentGroupId>e44de2d8-0158-1000-0000-000000000000</parentGroupId>
+      <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+      <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+      <destination>
+        <groupId>e44de2d8-0158-1000-0000-000000000000</groupId>
+        <id>e450c828-0158-1000-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </destination>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <labelIndex>1</labelIndex>
+      <name></name>
+      <selectedRelationships>success</selectedRelationships>
+      <source>
+        <groupId>e44de2d8-0158-1000-0000-000000000000</groupId>
+        <id>e44e9a03-0158-1000-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </source>
+      <zIndex>0</zIndex>
+    </connections>
+    <controllerServices>
+      <id>e44eb449-0158-1000-0000-000000000000</id>
+      <parentGroupId>e44de2d8-0158-1000-0000-000000000000</parentGroupId>
+      <comments></comments>
+      <descriptors>
+        <entry>
+          <key>Database Connection URL</key>
+          <value>
+            <name>Database Connection URL</name>
+          </value>
+        </entry>
+        <entry>
+          <key>Database Driver Class Name</key>
+          <value>
+            <name>Database Driver Class Name</name>
+          </value>
+        </entry>
+        <entry>
+          <key>database-driver-locations</key>
+          <value>
+            <name>database-driver-locations</name>
+          </value>
+        </entry>
+        <entry>
+          <key>Database User</key>
+          <value>
+            <name>Database User</name>
+          </value>
+        </entry>
+        <entry>
+          <key>Password</key>
+          <value>
+            <name>Password</name>
+          </value>
+        </entry>
+        <entry>
+          <key>Max Wait Time</key>
+          <value>
+            <name>Max Wait Time</name>
+          </value>
+        </entry>
+        <entry>
+          <key>Max Total Connections</key>
+          <value>
+            <name>Max Total Connections</name>
+          </value>
+        </entry>
+        <entry>
+          <key>Validation-query</key>
+          <value>
+            <name>Validation-query</name>
+          </value>
+        </entry>
+      </descriptors>
+      <name>DBCPConnectionPool</name>
+      <properties>
+        <entry>
+          <key>Database Connection URL</key>
+          <value>jdbc:postgresql://postgres.minifi:5432/test</value>
+        </entry>
+        <entry>
+          <key>Database Driver Class Name</key>
+          <value>org.postgresql.Driver</value>
+        </entry>
+        <entry>
+          <key>database-driver-locations</key>
+          <value>/opt/minifi-jars/postgresql-9.4.1212.jre6.jar</value>
+        </entry>
+        <entry>
+          <key>Database User</key>
+          <value>postgres</value>
+        </entry>
+        <entry>
+          <key>Password</key>
+        </entry>
+        <entry>
+          <key>Max Wait Time</key>
+        </entry>
+        <entry>
+          <key>Max Total Connections</key>
+        </entry>
+        <entry>
+          <key>Validation-query</key>
+        </entry>
+      </properties>
+      <state>ENABLED</state>
+      <type>org.apache.nifi.dbcp.DBCPConnectionPool</type>
+    </controllerServices>
+    <processors>
+      <id>e44e9a03-0158-1000-0000-000000000000</id>
+      <parentGroupId>e44de2d8-0158-1000-0000-000000000000</parentGroupId>
+      <position>
+        <x>0.0</x>
+        <y>0.0</y>
+      </position>
+      <config>
+        <bulletinLevel>WARN</bulletinLevel>
+        <comments></comments>
+        <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+        <descriptors>
+          <entry>
+            <key>list-db-tables-db-connection</key>
+            <value>
+              <identifiesControllerService>org.apache.nifi.dbcp.DBCPService</identifiesControllerService>
+              <name>list-db-tables-db-connection</name>
+            </value>
+          </entry>
+          <entry>
+            <key>list-db-tables-catalog</key>
+            <value>
+              <name>list-db-tables-catalog</name>
+            </value>
+          </entry>
+          <entry>
+            <key>list-db-tables-schema-pattern</key>
+            <value>
+              <name>list-db-tables-schema-pattern</name>
+            </value>
+          </entry>
+          <entry>
+            <key>list-db-tables-name-pattern</key>
+            <value>
+              <name>list-db-tables-name-pattern</name>
+            </value>
+          </entry>
+          <entry>
+            <key>list-db-tables-types</key>
+            <value>
+              <name>list-db-tables-types</name>
+            </value>
+          </entry>
+          <entry>
+            <key>list-db-include-count</key>
+            <value>
+              <name>list-db-include-count</name>
+            </value>
+          </entry>
+          <entry>
+            <key>list-db-refresh-interval</key>
+            <value>
+              <name>list-db-refresh-interval</name>
+            </value>
+          </entry>
+        </descriptors>
+        <executionNode>ALL</executionNode>
+        <lossTolerant>false</lossTolerant>
+        <penaltyDuration>30 sec</penaltyDuration>
+        <properties>
+          <entry>
+            <key>list-db-tables-db-connection</key>
+            <value>e44eb449-0158-1000-0000-000000000000</value>
+          </entry>
+          <entry>
+            <key>list-db-tables-catalog</key>
+          </entry>
+          <entry>
+            <key>list-db-tables-schema-pattern</key>
+          </entry>
+          <entry>
+            <key>list-db-tables-name-pattern</key>
+          </entry>
+          <entry>
+            <key>list-db-tables-types</key>
+            <value>TABLE</value>
+          </entry>
+          <entry>
+            <key>list-db-include-count</key>
+            <value>false</value>
+          </entry>
+          <entry>
+            <key>list-db-refresh-interval</key>
+            <value>0 sec</value>
+          </entry>
+        </properties>
+        <runDurationMillis>0</runDurationMillis>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <yieldDuration>1 sec</yieldDuration>
+      </config>
+      <name>ListDatabaseTables</name>
+      <relationships>
+        <autoTerminate>false</autoTerminate>
+        <name>success</name>
+      </relationships>
+      <style></style>
+      <type>org.apache.nifi.processors.standard.ListDatabaseTables</type>
+    </processors>
+    <processors>
+      <id>e450c828-0158-1000-0000-000000000000</id>
+      <parentGroupId>e44de2d8-0158-1000-0000-000000000000</parentGroupId>
+      <position>
+        <x>3.0</x>
+        <y>221.0</y>
+      </position>
+      <config>
+        <bulletinLevel>WARN</bulletinLevel>
+        <comments></comments>
+        <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+        <descriptors>
+          <entry>
+            <key>Log Level</key>
+            <value>
+              <name>Log Level</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Log Payload</key>
+            <value>
+              <name>Log Payload</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Attributes to Log</key>
+            <value>
+              <name>Attributes to Log</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Attributes to Ignore</key>
+            <value>
+              <name>Attributes to Ignore</name>
+            </value>
+          </entry>
+          <entry>
+            <key>Log prefix</key>
+            <value>
+              <name>Log prefix</name>
+            </value>
+          </entry>
+        </descriptors>
+        <executionNode>ALL</executionNode>
+        <lossTolerant>false</lossTolerant>
+        <penaltyDuration>30 sec</penaltyDuration>
+        <properties>
+          <entry>
+            <key>Log Level</key>
+            <value>info</value>
+          </entry>
+          <entry>
+            <key>Log Payload</key>
+            <value>true</value>
+          </entry>
+          <entry>
+            <key>Attributes to Log</key>
+          </entry>
+          <entry>
+            <key>Attributes to Ignore</key>
+          </entry>
+          <entry>
+            <key>Log prefix</key>
+          </entry>
+        </properties>
+        <runDurationMillis>0</runDurationMillis>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <yieldDuration>1 sec</yieldDuration>
+      </config>
+      <name>LogAttribute</name>
+      <relationships>
+        <autoTerminate>true</autoTerminate>
+        <name>success</name>
+      </relationships>
+      <style></style>
+      <type>org.apache.nifi.processors.standard.LogAttribute</type>
+    </processors>
+  </snippet>
+  <timestamp>12/09/2016 16:15:45 UTC</timestamp>
+</template>
