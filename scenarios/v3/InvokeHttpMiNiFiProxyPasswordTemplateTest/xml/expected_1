@@ -1,0 +1,1 @@
+o.a.nifi.remote.StandardRemoteGroupPort RemoteGroupPort\[name=input,target=http://nifi.minifi2:8080/nifi\] Successfully sent \[.*\] \(.*\) to http://nifi.minifi2:8080/nifi-api in .* at a rate of .*/sec
